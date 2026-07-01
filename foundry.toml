@@ -19,6 +19,15 @@ ignored_error_codes = [
   4591, # more than 256 warnings
 ]
 
+fs_permissions = [
+  { path = "bc_buy_bc_tokens.csv", access = "read" },
+  { path = "bc_price.csv", access = "read" },
+  { path = "bc_rr.csv", access = "read" },
+  { path = "bc_buy_bc_tokens.csv", access = "write" },
+  { path = "bc_price.csv", access = "write" },
+  { path = "bc_rr.csv", access = "write" },
+]
+
 [profile.ci]
 
 [profile.formal.model_checker]
