@@ -18,18 +18,20 @@ contract PowMathLibs is BondingCurveBaseTest {
     using StringFormatting for uint256;
     using StringFormatting for string;
 
-    uint256 constant public DECIMAL_PRECISION = 1e18;
-    uint256 constant public B = DECIMAL_PRECISION * 15 / 100;
-    uint256 constant public B_PLUS_1 = B + 1 ether;
-    uint256 constant public A = 0.19321899697342265 ether;
+    uint256 public constant DECIMAL_PRECISION = 1e18;
+    uint256 public constant B = DECIMAL_PRECISION * 15 / 100;
+    uint256 public constant B_PLUS_1 = B + 1 ether;
+    uint256 public constant A = 0.19321899697342265 ether;
 
-    uint256 constant public ABDK_VIRTUAL_BALANCE_MAX = 1549678864064168721285149826242827130;
-    uint256 constant public ABDK_SUPPLY_PRICE_MAX = 9223372036854775807999999999999999999;
-    uint256 constant public ABDK_SUPPLY_RR_MAX = 30989063942584025131852373177124152;
+    uint256 public constant ABDK_VIRTUAL_BALANCE_MAX = 1549678864064168721285149826242827130;
+    uint256 public constant ABDK_SUPPLY_PRICE_MAX = 9223372036854775807999999999999999999;
+    uint256 public constant ABDK_SUPPLY_RR_MAX = 30989063942584025131852373177124152;
 
-    uint256 constant public PRB_VIRTUAL_BALANCE_MAX = 9727491886909253638568256650104378053485477408485367443158460542460905514151;
-    uint256 constant public PRB_SUPPLY_PRICE_MAX = 57896044618658097711785492504343953926634992332820282019728792003956564819967;
-    uint256 constant public PRB_SUPPLY_RR_MAX = 181518550638961357240962399967812992070853126495805907086670726955007;
+    uint256 public constant PRB_VIRTUAL_BALANCE_MAX =
+        9727491886909253638568256650104378053485477408485367443158460542460905514151;
+    uint256 public constant PRB_SUPPLY_PRICE_MAX =
+        57896044618658097711785492504343953926634992332820282019728792003956564819967;
+    uint256 public constant PRB_SUPPLY_RR_MAX = 181518550638961357240962399967812992070853126495805907086670726955007;
 
     IBondingCurve abdkBondingCurve;
     IBondingCurve prbBondingCurve;
@@ -154,7 +156,13 @@ contract PowMathLibs is BondingCurveBaseTest {
         _writeToFile(_fileName, _max, abdkBondingCurve.pow(_max, _exp), prbBondingCurve.pow(_max, _exp));
     }
 
-    function _testPowIterationsLoop(uint256 _exp, uint256 _min, uint256 _max, uint256 _iterations, string memory _fileName) public {
+    function _testPowIterationsLoop(
+        uint256 _exp,
+        uint256 _min,
+        uint256 _max,
+        uint256 _iterations,
+        string memory _fileName
+    ) public {
         uint256 ra;
         uint256 rp;
 
@@ -205,7 +213,7 @@ contract PowMathLibs is BondingCurveBaseTest {
         vm.expectRevert();
         _bc.pow(max, exp);
         uint256 i;
-        while(min < max - 1 && i < 100) {
+        while (min < max - 1 && i < 100) {
             //uint256 x = (min + max) / 2;
             // To avoid overflows
             uint256 diff = max - min;
@@ -233,7 +241,7 @@ contract PowMathLibs is BondingCurveBaseTest {
     function testAbdkGetBoundsBinary1() public {
         uint256 min = 9223372036854775807999999999994800188;
         uint256 max = 9223372036854775808000000000002051700;
-        uint256 x =_testGetBoundsBinary(abdkBondingCurve, min, max, DECIMAL_PRECISION * DECIMAL_PRECISION / B_PLUS_1);
+        uint256 x = _testGetBoundsBinary(abdkBondingCurve, min, max, DECIMAL_PRECISION * DECIMAL_PRECISION / B_PLUS_1);
         console2.log(x * A / B_PLUS_1, "x ");
     }
 
@@ -252,7 +260,7 @@ contract PowMathLibs is BondingCurveBaseTest {
     function testPrbGetBoundsBinary1() public {
         uint256 min = 57896044618658097711785492504343953926634992332820282019728757288841211502032;
         uint256 max = 57896044618658097711785492504343953926634992332820282019728819518993990113449;
-        uint256 x =_testGetBoundsBinary(prbBondingCurve, min, max, DECIMAL_PRECISION * DECIMAL_PRECISION / B_PLUS_1);
+        uint256 x = _testGetBoundsBinary(prbBondingCurve, min, max, DECIMAL_PRECISION * DECIMAL_PRECISION / B_PLUS_1);
         console2.log(x / B_PLUS_1 * A, "x ");
     }
 
@@ -276,19 +284,11 @@ contract PowMathLibs is BondingCurveBaseTest {
         uint256 integerPart = n / one;
         uint256 fractionalPart = n % one;
 
-        return string.concat(
-            integerPart.toString(),
-            ".",
-            (one + fractionalPart).toString().slice(1)
-        );
+        return string.concat(integerPart.toString(), ".", (one + fractionalPart).toString().slice(1));
     }
 
     function _writeToFile(string memory fileName, uint256 _x1, uint256 _x2, uint256 _x3) internal {
         /// forge-lint: disable-next-line(unsafe-cheatcode)
-        vm.writeLine(
-            fileName,
-            string.concat(_decimal(_x1), ",", _decimal(_x2), ",", _decimal(_x3))
-        );
-
+        vm.writeLine(fileName, string.concat(_decimal(_x1), ",", _decimal(_x2), ",", _decimal(_x3)));
     }
 }
