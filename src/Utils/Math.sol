@@ -15,6 +15,10 @@ library ABDKMath {
     uint256 internal constant MAX_ARGUMENT = uint256(int256(type(int128).max)) * DECIMAL_PRECISION >> 64;
 
     function fromDecimal(int256 x) internal pure returns (int128) {
+        // `x << 64` does not revert on overflow, so reject what would not fit before shifting
+        // casting `MAX_ARGUMENT` to `int256` is safe: it is below 2^127
+        // forge-lint: disable-next-line(unsafe-typecast)
+        require(x <= int256(MAX_ARGUMENT) && x >= -int256(MAX_ARGUMENT), "ABDKMath: argument too large");
         // casting `DECIMAL_PRECISION` to `int256` is safe
         // forge-lint: disable-next-line(unsafe-typecast)
         int256 ret = (x << 64) / int256(DECIMAL_PRECISION);
@@ -22,6 +26,8 @@ library ABDKMath {
     }
 
     function fromDecimal(uint256 x) internal pure returns (int128) {
+        // `x << 64` does not revert on overflow: above 2^192 the high bits would be dropped silently
+        require(x <= MAX_ARGUMENT, "ABDKMath: argument too large");
         uint256 ret = (x << 64) / DECIMAL_PRECISION;
         return ret.toInt256().toInt128();
     }
